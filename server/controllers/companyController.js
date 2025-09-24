@@ -2,8 +2,8 @@ import Company from "../models/Company.js";
 import bcrypt from 'bcrypt'
 import { v2 as cloudinary } from 'cloudinary'
 import generateToken from "../utils/generateToken.js";
-import Job from "../models/Job.js";
-import JobApplication from "../models/JobApplication.js";
+import Policy from "../models/Policy.js";
+import PolicyApplication from "../models/PolicyApplication.js";
 
 // Register a new company
 export const registerCompany = async (req, res) => {
@@ -103,7 +103,7 @@ export const getCompanyData = async (req, res) => {
 }
 
 // Post New Job
-export const postJob = async (req, res) => {
+export const postPolicy = async (req, res) => {
 
     const { title, description, location, salary, level, category } = req.body
 
@@ -111,7 +111,7 @@ export const postJob = async (req, res) => {
 
     try {
 
-        const newJob = new Job({
+        const newPolicy = new Policy({
             title,
             description,
             location,
@@ -122,9 +122,9 @@ export const postJob = async (req, res) => {
             category
         })
 
-        await newJob.save()
+        await newPolicy.save()
 
-        res.json({ success: true, newJob })
+        res.json({ success: true, newPolicy })
 
     } catch (error) {
 
@@ -136,15 +136,15 @@ export const postJob = async (req, res) => {
 }
 
 // Get Company Job Applicants
-export const getCompanyJobApplicants = async (req, res) => {
+export const getCompanyPolicyApplicants = async (req, res) => {
     try {
 
         const companyId = req.company._id
 
         // Find job applications for the user and populate related data
-        const applications = await JobApplication.find({ companyId })
+        const applications = await PolicyApplication.find({ companyId })
             .populate('userId', 'name image resume')
-            .populate('jobId', 'title location category level salary')
+            .populate('policyId', 'title location category level salary')
             .exec()
 
         return res.json({ success: true, applications })
@@ -155,20 +155,20 @@ export const getCompanyJobApplicants = async (req, res) => {
 }
 
 // Get Company Posted Jobs
-export const getCompanyPostedJobs = async (req, res) => {
+export const getCompanyPostedPolicies = async (req, res) => {
     try {
 
         const companyId = req.company._id
 
-        const jobs = await Job.find({ companyId })
+        const policies = await Policy.find({ companyId })
 
         // Adding No. of applicants info in data
-        const jobsData = await Promise.all(jobs.map(async (job) => {
-            const applicants = await JobApplication.find({ jobId: job._id });
-            return { ...job.toObject(), applicants: applicants.length }
+        const policiesData = await Promise.all(policies.map(async (policy) => {
+            const applicants = await PolicyApplication.find({ policyId: policy._id });
+            return { ...policy.toObject(), applicants: applicants.length }
         }))
 
-        res.json({ success: true, jobsData })
+        res.json({ success: true, policiesData })
 
     } catch (error) {
         res.json({ success: false, message: error.message })
@@ -176,14 +176,14 @@ export const getCompanyPostedJobs = async (req, res) => {
 }
 
 // Change Job Application Status
-export const ChangeJobApplicationsStatus = async (req, res) => {
+export const ChangePolicyApplicationsStatus = async (req, res) => {
 
     try {
 
         const { id, status } = req.body
 
-        // Find Job application and update status
-        await JobApplication.findOneAndUpdate({ _id: id }, { status })
+        // Find Policy application and update status
+        await PolicyApplication.findOneAndUpdate({ _id: id }, { status })
 
         res.json({ success: true, message: 'Status Changed' })
 
@@ -202,15 +202,15 @@ export const changeVisiblity = async (req, res) => {
 
         const companyId = req.company._id
 
-        const job = await Job.findById(id)
+        const policy = await Policy.findById(id)
 
-        if (companyId.toString() === job.companyId.toString()) {
-            job.visible = !job.visible
+        if (companyId.toString() === policy.companyId.toString()) {
+            policy.visible = !policy.visible
         }
 
-        await job.save()
+        await policy.save()
 
-        res.json({ success: true, job })
+        res.json({ success: true, policy })
 
     } catch (error) {
         res.json({ success: false, message: error.message })

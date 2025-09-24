@@ -1,5 +1,5 @@
-import Job from "../models/Job.js"
-import JobApplication from "../models/JobApplication.js"
+import Policy from "../models/Policy.js"
+import PolicyApplication from "../models/PolicyApplication.js"
 import User from "../models/User.js"
 import { v2 as cloudinary } from "cloudinary"
 
@@ -25,31 +25,31 @@ export const getUserData = async (req, res) => {
 }
 
 
-// Apply For Job
-export const applyForJob = async (req, res) => {
+// Apply For Policy
+export const applyForPolicy = async (req, res) => {
 
-    const { jobId } = req.body
+    const { policyId } = req.body
 
     const userId = req.auth.userId
 
     try {
 
-        const isAlreadyApplied = await JobApplication.find({ jobId, userId })
+        const isAlreadyApplied = await PolicyApplication.find({ policyId, userId })
 
         if (isAlreadyApplied.length > 0) {
             return res.json({ success: false, message: 'Already Applied' })
         }
 
-        const jobData = await Job.findById(jobId)
+        const policyData = await Policy.findById(policyId)
 
-        if (!jobData) {
-            return res.json({ success: false, message: 'Job Not Found' })
+        if (!policyData) {
+            return res.json({ success: false, message: 'Policy Not Found' })
         }
 
-        await JobApplication.create({
-            companyId: jobData.companyId,
+        await PolicyApplication.create({
+            companyId: policyData.companyId,
             userId,
-            jobId,
+            policyId,
             date: Date.now()
         })
 
@@ -62,19 +62,19 @@ export const applyForJob = async (req, res) => {
 }
 
 // Get User Applied Applications Data
-export const getUserJobApplications = async (req, res) => {
+export const getUserPolicyApplications = async (req, res) => {
 
     try {
 
         const userId = req.auth.userId
 
-        const applications = await JobApplication.find({ userId })
+        const applications = await PolicyApplication.find({ userId })
             .populate('companyId', 'name email image')
-            .populate('jobId', 'title description location category level salary')
+            .populate('policyId', 'title description location category level salary')
             .exec()
 
         if (!applications) {
-            return res.json({ success: false, message: 'No job applications found for this user.' })
+            return res.json({ success: false, message: 'No policy applications found for this user.' })
         }
 
         return res.json({ success: true, applications })
