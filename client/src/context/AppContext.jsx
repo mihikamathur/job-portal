@@ -19,7 +19,7 @@ export const AppContextProvider = (props) => {
 
     const [isSearched, setIsSearched] = useState(false)
 
-    const [jobs, setJobs] = useState([])
+    const [policies, setPolicies] = useState([])
 
     const [showRecruiterLogin, setShowRecruiterLogin] = useState(false)
 
@@ -29,14 +29,14 @@ export const AppContextProvider = (props) => {
     const [userData, setUserData] = useState(null)
     const [userApplications, setUserApplications] = useState([])
 
-    // Function to Fetch Jobs 
-    const fetchJobs = async () => {
+    // Function to Fetch Policies 
+    const fetchPolicies = async () => {
         try {
 
-            const { data } = await axios.get(backendUrl + '/api/jobs')
+            const { data } = await axios.get(backendUrl + '/api/policies')
 
             if (data.success) {
-                setJobs(data.jobs)
+                setPolicies(data.policies)
             } else {
                 toast.error(data.message)
             }
@@ -105,7 +105,7 @@ export const AppContextProvider = (props) => {
 
     // Retrive Company Token From LocalStorage
     useEffect(() => {
-        fetchJobs()
+        fetchPolicies()
 
         const storedCompanyToken = localStorage.getItem('companyToken')
 
@@ -133,7 +133,7 @@ export const AppContextProvider = (props) => {
     const value = {
         setSearchFilter, searchFilter,
         isSearched, setIsSearched,
-        jobs, setJobs,
+        policies, setPolicies,
         showRecruiterLogin, setShowRecruiterLogin,
         companyToken, setCompanyToken,
         companyData, setCompanyData,

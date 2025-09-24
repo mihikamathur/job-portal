@@ -6,13 +6,13 @@ import Navbar from '../components/Navbar'
 import { assets } from '../assets/assets'
 import kconvert from 'k-convert';
 import moment from 'moment';
-import JobCard from '../components/JobCard'
+import PolicyCard from '../components/JobCard'
 import Footer from '../components/Footer'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useAuth } from '@clerk/clerk-react'
 
-const ApplyJob = () => {
+const ApplyPolicy = () => {
 
   const { id } = useParams()
 
@@ -20,19 +20,19 @@ const ApplyJob = () => {
 
   const navigate = useNavigate()
 
-  const [JobData, setJobData] = useState(null)
+  const [PolicyData, setPolicyData] = useState(null)
   const [isAlreadyApplied, setIsAlreadyApplied] = useState(false)
 
-  const { jobs, backendUrl, userData, userApplications, fetchUserApplications } = useContext(AppContext)
+  const { policies, backendUrl, userData, userApplications, fetchUserApplications } = useContext(AppContext)
 
-  const fetchJob = async () => {
+  const fetchPolicy = async () => {
 
     try {
 
-      const { data } = await axios.get(backendUrl + `/api/jobs/${id}`)
+      const { data } = await axios.get(backendUrl + `/api/policies/${id}`)
 
       if (data.success) {
-        setJobData(data.job)
+        setPolicyData(data.policy)
       } else {
         toast.error(data.message)
       }
@@ -47,7 +47,7 @@ const ApplyJob = () => {
     try {
 
       if (!userData) {
-        return toast.error('Login to apply for jobs')
+        return toast.error('Login to apply for policies')
       }
 
       if (!userData.resume) {
@@ -58,7 +58,7 @@ const ApplyJob = () => {
       const token = await getToken()
 
       const { data } = await axios.post(backendUrl + '/api/users/apply',
-        { jobId: JobData._id },
+        { policyId: PolicyData._id },
         { headers: { Authorization: `Bearer ${token}` } }
       )
 
@@ -76,22 +76,22 @@ const ApplyJob = () => {
 
   const checkAlreadyApplied = () => {
 
-    const hasApplied = userApplications.some(item => item.jobId._id === JobData._id)
+    const hasApplied = userApplications.some(item => item.policyId._id === PolicyData._id)
     setIsAlreadyApplied(hasApplied)
 
   }
 
   useEffect(() => {
-    fetchJob()
+    fetchPolicy()
   }, [id])
 
   useEffect(() => {
-    if (userApplications.length > 0 && JobData) {
+    if (userApplications.length > 0 && PolicyData) {
       checkAlreadyApplied()
     }
-  }, [JobData, userApplications, id])
+  }, [PolicyData, userApplications, id])
 
-  return JobData ? (
+  return PolicyData ? (
     <>
       <Navbar />
 
@@ -99,25 +99,25 @@ const ApplyJob = () => {
         <div className='bg-white text-black rounded-lg w-ful'>
           <div className='flex justify-center md:justify-between flex-wrap gap-8 px-14 py-20  mb-6 bg-sky-50 border border-sky-400 rounded-xl'>
             <div className='flex flex-col md:flex-row items-center'>
-              <img className='h-24 bg-white rounded-lg p-4 mr-4 max-md:mb-4 border' src={JobData.companyId.image} alt="" />
+              <img className='h-24 bg-white rounded-lg p-4 mr-4 max-md:mb-4 border' src={PolicyData.companyId.image} alt="" />
               <div className='text-center md:text-left text-neutral-700'>
-                <h1 className='text-2xl sm:text-4xl font-medium'>{JobData.title}</h1>
+                <h1 className='text-2xl sm:text-4xl font-medium'>{PolicyData.title}</h1>
                 <div className='flex flex-row flex-wrap max-md:justify-center gap-y-2 gap-6 items-center text-gray-600 mt-2'>
                   <span className='flex items-center gap-1'>
                     <img src={assets.suitcase_icon} alt="" />
-                    {JobData.companyId.name}
+                    {PolicyData.companyId.name}
                   </span>
                   <span className='flex items-center gap-1'>
                     <img src={assets.location_icon} alt="" />
-                    {JobData.location}
+                    {PolicyData.location}
                   </span>
                   <span className='flex items-center gap-1'>
                     <img src={assets.person_icon} alt="" />
-                    {JobData.level}
+                    {PolicyData.level}
                   </span>
                   <span className='flex items-center gap-1'>
                     <img src={assets.money_icon} alt="" />
-                    CTC: {kconvert.convertTo(JobData.salary)}
+                    Price: {kconvert.convertTo(PolicyData.salary)}
                   </span>
                 </div>
               </div>
@@ -125,28 +125,26 @@ const ApplyJob = () => {
 
             <div className='flex flex-col justify-center text-end text-sm max-md:mx-auto max-md:text-center'>
               <button onClick={applyHandler} className='bg-blue-600 p-2.5 px-10 text-white rounded'>{isAlreadyApplied ? 'Already Applied' : 'Apply Now'}</button>
-              <p className='mt-1 text-gray-600'>Posted {moment(JobData.date).fromNow()}</p>
+              <p className='mt-1 text-gray-600'>Posted {moment(PolicyData.date).fromNow()}</p>
             </div>
 
           </div>
 
           <div className='flex flex-col lg:flex-row justify-between items-start'>
             <div className='w-full lg:w-2/3'>
-              <h2 className='font-bold text-2xl mb-4'>Job description</h2>
-              <div className='rich-text' dangerouslySetInnerHTML={{ __html: JobData.description }}></div>
+              <h2 className='font-bold text-2xl mb-4'>Policy description</h2>
+              <div className='rich-text' dangerouslySetInnerHTML={{ __html: PolicyData.description }}></div>
               <button onClick={applyHandler} className='bg-blue-600 p-2.5 px-10 text-white rounded mt-10'>{isAlreadyApplied ? 'Already Applied' : 'Apply Now'}</button>
             </div>
             {/* Right Section More Jobs */}
             <div className='w-full lg:w-1/3 mt-8 lg:mt-0 lg:ml-8 space-y-5'>
-              <h2>More jobs from {JobData.companyId.name}</h2>
-              {jobs.filter(job => job._id !== JobData._id && job.companyId._id === JobData.companyId._id)
-                .filter(job => {
-                  // Set of applied jobIds
-                  const appliedJobsIds = new Set(userApplications.map(app => app.jobId && app.jobId._id))
-                  // Return true if the user has not already applied for this job
-                  return !appliedJobsIds.has(job._id)
+              <h2>More policies from {PolicyData.companyId.name}</h2>
+              {policies.filter(policy => policy._id !== PolicyData._id && policy.companyId._id === PolicyData.companyId._id)
+                .filter(policy => {
+                  const appliedPoliciesIds = new Set(userApplications.map(app => app.policyId && app.policyId._id))
+                  return !appliedPoliciesIds.has(policy._id)
                 }).slice(0, 4)
-                .map((job, index) => <JobCard key={index} job={job} />)}
+                .map((policy, index) => <PolicyCard key={index} policy={policy} />)}
             </div>
           </div>
 
@@ -159,4 +157,4 @@ const ApplyJob = () => {
   )
 }
 
-export default ApplyJob
+export default ApplyPolicy

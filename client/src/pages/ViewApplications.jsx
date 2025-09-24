@@ -11,8 +11,8 @@ const ViewApplications = () => {
 
   const [applicants, setApplicants] = useState(false)
 
-  // Function to fetch company Job Applications data 
-  const fetchCompanyJobApplications = async () => {
+  // Function to fetch company Policy Applications data 
+  const fetchCompanyPolicyApplications = async () => {
 
     try {
 
@@ -32,7 +32,7 @@ const ViewApplications = () => {
 
   }
 
-  // Function to Update Job Applications Status 
+  // Function to Update Policy Applications Status 
   const changeJobApplicationStatus = async (id, status) => {
     try {
 
@@ -42,7 +42,7 @@ const ViewApplications = () => {
       )
 
       if (data.success) {
-        fetchCompanyJobApplications()
+        fetchCompanyPolicyApplications()
       } else {
         toast.error(data.message)
       }
@@ -54,7 +54,7 @@ const ViewApplications = () => {
 
   useEffect(() => {
     if (companyToken) {
-      fetchCompanyJobApplications()
+      fetchCompanyPolicyApplications()
     }
   }, [companyToken])
 
@@ -70,22 +70,22 @@ const ViewApplications = () => {
             <tr className='border-b'>
               <th className='py-2 px-4 text-left'>#</th>
               <th className='py-2 px-4 text-left'>User name</th>
-              <th className='py-2 px-4 text-left max-sm:hidden'>Job Title</th>
+              <th className='py-2 px-4 text-left max-sm:hidden'>Policy Title</th>
               <th className='py-2 px-4 text-left max-sm:hidden'>Location</th>
               <th className='py-2 px-4 text-left'>Resume</th>
               <th className='py-2 px-4 text-left'>Action</th>
             </tr>
           </thead>
           <tbody>
-            {applicants.filter(item => item.jobId && item.userId).map((applicant, index) => (
+            {applicants.filter(item => item.policyId && item.userId).map((applicant, index) => (
               <tr key={index} className='text-gray-700'>
                 <td className='py-2 px-4 border-b text-center'>{index + 1}</td>
                 <td className='py-2 px-4 border-b text-center flex items-center'>
                   <img className='w-10 h-10 rounded-full mr-3 max-sm:hidden' src={applicant.userId.image} alt="" />
                   <span>{applicant.userId.name}</span>
                 </td>
-                <td className='py-2 px-4 border-b max-sm:hidden'>{applicant.jobId.title}</td>
-                <td className='py-2 px-4 border-b max-sm:hidden'>{applicant.jobId.location}</td>
+                <td className='py-2 px-4 border-b max-sm:hidden'>{applicant.policyId.title}</td>
+                <td className='py-2 px-4 border-b max-sm:hidden'>{applicant.policyId.location}</td>
                 <td className='py-2 px-4 border-b'>
                   <a href={applicant.userId.resume} target='_blank'
                     className='bg-blue-50 text-blue-400 px-3 py-1 rounded inline-flex gap-2 items-center'

@@ -72,7 +72,7 @@ export const assets = {
     amazon_logo
 }
 
-export const JobCategories = [
+export const PolicyCategories = [
     "Programming",
     "Data Science",
     "Designing",
@@ -82,7 +82,7 @@ export const JobCategories = [
     "Cybersecurity",
 ]
 
-export const JobLocations = [
+export const PolicyLocations = [
     "Bangalore",
     "Washington",
     "Hyderabad",

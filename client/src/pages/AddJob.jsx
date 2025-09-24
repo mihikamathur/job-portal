@@ -1,11 +1,11 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import Quill from 'quill'
-import { JobCategories, JobLocations } from '../assets/assets';
+import { PolicyCategories, PolicyLocations } from '../assets/assets';
 import axios from 'axios';
 import { AppContext } from '../context/AppContext';
 import { toast } from 'react-toastify';
 
-const AddJob = () => {
+const AddPolicy = () => {
 
     const [title, setTitle] = useState('');
     const [location, setLocation] = useState('Bangalore');
@@ -25,13 +25,13 @@ const AddJob = () => {
 
             const description = quillRef.current.root.innerHTML
 
-            const { data } = await axios.post(backendUrl + '/api/company/post-job',
+            const { data } = await axios.post(backendUrl + '/api/company/post-policy',
                 { title, description, location, salary, category, level },
                 { headers: { token: companyToken } }
             )
 
             if (data.success) {
-                toast.success(data.message)
+                toast.success('Policy posted')
                 setTitle('')
                 setSalary(0)
                 quillRef.current.root.innerHTML = ""
@@ -60,7 +60,7 @@ const AddJob = () => {
         <form onSubmit={onSubmitHandler} className='container p-4 flex flex-col w-full items-start gap-3'>
 
             <div className='w-full'>
-                <p className='mb-2'>Job Title</p>
+                <p className='mb-2'>Policy Title</p>
                 <input type="text" placeholder='Type here'
                     onChange={e => setTitle(e.target.value)} value={title}
                     required
@@ -69,7 +69,7 @@ const AddJob = () => {
             </div>
 
             <div className='w-full max-w-lg'>
-                <p className='my-2'>Job Description</p>
+                <p className='my-2'>Policy Description</p>
                 <div ref={editorRef}>
 
                 </div>
@@ -78,25 +78,25 @@ const AddJob = () => {
             <div className='flex flex-col sm:flex-row gap-2 w-full sm:gap-8'>
 
                 <div>
-                    <p className='mb-2'>Job Category</p>
+                    <p className='mb-2'>Policy Category</p>
                     <select className='w-full px-3 py-2 border-2 border-gray-300 rounded' onChange={e => setCategory(e.target.value)}>
-                        {JobCategories.map((category, index) => (
+                        {PolicyCategories.map((category, index) => (
                             <option key={index} value={category}>{category}</option>
                         ))}
                     </select>
                 </div>
 
                 <div>
-                    <p className='mb-2'>Job Location</p>
+                    <p className='mb-2'>Policy Location</p>
                     <select className='w-full px-3 py-2 border-2 border-gray-300 rounded' onChange={e => setLocation(e.target.value)}>
-                        {JobLocations.map((location, index) => (
+                        {PolicyLocations.map((location, index) => (
                             <option key={index} value={location}>{location}</option>
                         ))}
                     </select>
                 </div>
 
                 <div>
-                    <p className='mb-2'>Job Level</p>
+                    <p className='mb-2'>Policy Level</p>
                     <select className='w-full px-3 py-2 border-2 border-gray-300 rounded' onChange={e => setLevel(e.target.value)}>
                         <option value="Beginner level">Beginner level</option>
                         <option value="Intermediate level">Intermediate level</option>
@@ -106,7 +106,7 @@ const AddJob = () => {
 
             </div>
             <div>
-                <p className='mb-2'>Job Salary</p>
+                <p className='mb-2'>Policy Price</p>
                 <input min={0} className='w-full px-3 py-2 border-2 border-gray-300 rounded sm:w-[120px]' onChange={e => setSalary(e.target.value)} type="Number" placeholder='2500' />
             </div>
 
@@ -115,4 +115,4 @@ const AddJob = () => {
     )
 }
 
-export default AddJob
+export default AddPolicy
