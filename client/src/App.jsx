@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard'
 import AddJob from './pages/AddJob'
 import ManageJobs from './pages/ManageJobs'
 import ViewApplications from './pages/ViewApplications'
+import FocusFlight from './pages/FocusFlight'
 import 'quill/dist/quill.snow.css'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,6 +24,7 @@ const App = () => {
       <ToastContainer />
       <Routes>
         <Route path='/' element={<Home />} />
+        <Route path='/focus' element={<FocusFlight />} />
         <Route path='/apply-job/:id' element={<ApplyJob />} />
         <Route path='/applications' element={<Applications />} />
         <Route path='/dashboard' element={<Dashboard />}>

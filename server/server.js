@@ -10,6 +10,7 @@ import connectCloudinary from './config/cloudinary.js'
 import jobRoutes from './routes/jobRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import { clerkMiddleware } from '@clerk/express'
+import focusRoutes from './routes/focusRoutes.js'
 
 
 // Initialize Express
@@ -33,6 +34,7 @@ app.post('/webhooks', clerkWebhooks)
 app.use('/api/company', companyRoutes)
 app.use('/api/jobs', jobRoutes)
 app.use('/api/users', userRoutes)
+app.use('/api/focus', focusRoutes)
 
 // Port
 const PORT = process.env.PORT || 5000
